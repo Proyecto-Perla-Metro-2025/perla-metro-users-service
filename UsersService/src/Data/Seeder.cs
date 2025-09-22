@@ -18,7 +18,7 @@ namespace UsersService.src.Data
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<ApplicationDBContext>();
                 context.Database.EnsureCreated();
-                
+
                 if (!context.users.Any())
                 {
                     Random random = new Random();
@@ -35,7 +35,7 @@ namespace UsersService.src.Data
                             Email = GenerateCryptoRandomString(random.Next(1, 17)) + "@perlametro.cl",
                             Password = PasswordManager.HashPassword(GeneratePassword(12)),
                             RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
-                            State = true
+                            State = "Active"
                         };
                         context.users.Add(user);
                         context.SaveChanges();

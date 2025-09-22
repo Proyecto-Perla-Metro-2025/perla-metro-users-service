@@ -24,7 +24,7 @@ namespace UsersService.src.Repository
             throw new NotImplementedException();
         }
 
-        public Task EnableDisableUser(bool enable)
+        public Task EnableDisableUser(string Id)
         {
             throw new NotImplementedException();
         }
@@ -34,9 +34,9 @@ namespace UsersService.src.Repository
              return await _context.users.ToListAsync();
         }
 
-        public Task<User> GetUserAsync(string Id)
+        public async Task<User> GetUser(string Id)
         {
-            throw new NotImplementedException();
+            return await _context.users.FindAsync(Id);
         }
 
         public Task<List<User>> GetUsers(QueryObject query)

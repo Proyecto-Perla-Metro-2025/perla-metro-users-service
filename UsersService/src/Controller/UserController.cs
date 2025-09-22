@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UsersService.src.Data;
 using UsersService.src.Interface;
+using UsersService.src.Mapper;
 
 namespace UsersService.src.Controller
 {
@@ -22,7 +23,19 @@ namespace UsersService.src.Controller
         public async Task<IActionResult> GetAll()
         {
             var users = await _userRepository.GetAll();
-            return Ok(users);
+            var usersDtos = users.ToDtoEnumerable();
+            return Ok(usersDtos);
+        }
+
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUser(string Id)
+        {
+            var user = await _userRepository.GetUser(Id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user.ToVisualizeUserDtoFromUser());
         }
     } 
 }

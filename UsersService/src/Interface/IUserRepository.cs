@@ -12,9 +12,9 @@ namespace UsersService.src.Interface
     {
         Task<User> CreateUser(CreateUserDto createUserDto);
         Task<List<User>> GetAll();
-        Task<User> GetUserAsync(string Id);
+        Task<User> GetUser(string Id);
         Task<User> UpdateUser(UpdateUserDto updateUserDto);
-        Task EnableDisableUser(bool enable);
+        Task EnableDisableUser(string Id);
         Task<List<User>> GetUsers(QueryObject query);
     }
 }
