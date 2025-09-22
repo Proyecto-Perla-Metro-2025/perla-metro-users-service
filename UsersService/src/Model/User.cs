@@ -14,6 +14,6 @@ namespace UsersService.src.Model
         public required string Email { get; set; }
         public required string Password { get; set; }
         public DateOnly RegistrationDate { get; set; }
-        public required string State { get; set; }
+        public bool State { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using UsersService.src.Data;
 using UsersService.src.DTOs;
 using UsersService.src.Helper;
@@ -34,14 +35,33 @@ namespace UsersService.src.Repository
              return await _context.users.ToListAsync();
         }
 
-        public async Task<User> GetUser(string Id)
+        public async Task<User?> GetUser(string Id)
         {
             return await _context.users.FindAsync(Id);
         }
 
-        public Task<List<User>> GetUsers(QueryObject query)
+        public async Task<List<User>> GetUsers(QueryObject query)
         {
-            throw new NotImplementedException();
+            var users = _context.users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Name))
+            {
+                users = users.Where(u => 
+                    EF.Functions.ILike(u.Name, $"%{query.Name}%") || 
+                    EF.Functions.ILike(u.Surename, $"%{query.Name}%"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Email))
+            {
+                users = users.Where(x => x.Email.Contains(query.Email));  
+            }
+            
+            if (query.State.HasValue)
+            {
+                users = users.Where(x => x.State == query.State.Value);  
+            }
+
+            return await users.ToListAsync();
         }
 
         public Task<User> UpdateUser(UpdateUserDto updateUserDto)

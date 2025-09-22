@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UsersService.src.Data;
+using UsersService.src.Helper;
 using UsersService.src.Interface;
 using UsersService.src.Mapper;
 
@@ -36,6 +37,19 @@ namespace UsersService.src.Controller
                 return NotFound();
             }
             return Ok(user.ToVisualizeUserDtoFromUser());
+        }
+
+        [HttpGet("UserFilter")]
+        public async Task<IActionResult> GetUsers([FromQuery] QueryObject query)
+        {
+            if (!ModelState.IsValid) 
+            {
+                return BadRequest(ModelState); 
+            }
+            
+            var users = await _userRepository.GetUsers(query); 
+            var usersDto = users.Select(u => u.ToVisualizeUserDtoFromUser()); 
+            return Ok(usersDto);
         }
     } 
 }

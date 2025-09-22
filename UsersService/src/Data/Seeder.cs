@@ -21,6 +21,20 @@ namespace UsersService.src.Data
 
                 if (!context.users.Any())
                 {
+                    var admin = new User
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Role = "Admin",
+                            Name = "Nombre_Admin",
+                            Surename = "Apellido_Admin",
+                            Email = "Admin@perlametro.cl",
+                            Password = PasswordManager.HashPassword("Password123+"),
+                            RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
+                            State = true
+                        };
+                    context.users.Add(admin);
+                    context.SaveChanges();
+
                     Random random = new Random();
                     string[] names = ["Aria", "Elias", "Sofia", "Adrian", "Mateo", "Clara"];
                     string[] surenames = ["Morgan", "Carter", "Delgado", "Blake", "Monroe", "Cruz"];
@@ -29,17 +43,16 @@ namespace UsersService.src.Data
                         var user = new User
                         {
                             Id = Guid.NewGuid().ToString(),
-                            Role = "Usuario",
+                            Role = "User",
                             Name = names[random.Next(0, 6)],
                             Surename = surenames[random.Next(0, 6)],
                             Email = GenerateCryptoRandomString(random.Next(1, 17)) + "@perlametro.cl",
                             Password = PasswordManager.HashPassword(GeneratePassword(12)),
                             RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
-                            State = "Active"
+                            State = true
                         };
                         context.users.Add(user);
                         context.SaveChanges();
-                        Console.WriteLine("Users agregados al contexto.");
                     }
                     context.SaveChanges();
                 }

@@ -27,7 +27,7 @@ namespace UsersService.src.Helper
         /// Hashes a password using BCrypt with custom work factor
         /// </summary>
         /// <param name="password">The plain text password to hash</param>
-        /// <param name="workFactor">The cost factor (4-31, higher is more secure but slower)</param>
+        /// <param name="workFactor">The cost factor</param>
         /// <returns>BCrypt hash of the password</returns>
         public static string HashPassword(string password, int workFactor)
         {

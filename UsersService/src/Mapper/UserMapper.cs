@@ -14,8 +14,7 @@ namespace UsersService.src.Mapper
             return new VisualizeUserDto
             {
                 Id = user.Id,
-                Name = user.Name,
-                Surename = user.Surename,
+                Fullname = $"{user.Name} {user.Surename}",
                 Email = user.Email,
                 State = user.State,
                 RegistrationDate = user.RegistrationDate
