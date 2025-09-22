@@ -1,0 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UsersService.src.DTOs;
+using UsersService.src.Helper;
+using UsersService.src.Model;
+
+namespace UsersService.src.Interface
+{
+    public interface IUserRepository
+    {
+        Task<User> CreateUser(CreateUserDto createUserDto);
+        Task<List<User>> GetAll();
+        Task<User> GetUserAsync(string Id);
+        Task<User> UpdateUser(UpdateUserDto updateUserDto);
+        Task EnableDisableUser(bool enable);
+        Task<List<User>> GetUsers(QueryObject query);
+    }
+}
