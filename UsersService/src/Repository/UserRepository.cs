@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,14 +26,29 @@ namespace UsersService.src.Repository
             throw new NotImplementedException();
         }
 
-        public Task EnableDisableUser(string Id)
+        public async Task EnableDisableUser(string Id)
         {
-            throw new NotImplementedException();
+            var user = await _context.users.FindAsync(Id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (user.State == true)
+            {
+                user.State = false;
+            }
+            else
+            {
+                user.State = true;
+            }
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task<List<User>> GetAll()
         {
-             return await _context.users.ToListAsync();
+            return await _context.users.ToListAsync();
         }
 
         public async Task<User?> GetUser(string Id)
@@ -64,9 +80,23 @@ namespace UsersService.src.Repository
             return await users.ToListAsync();
         }
 
-        public Task<User> UpdateUser(UpdateUserDto updateUserDto)
+        public async Task<User?> UpdateUser(UpdateUserDto updateUserDto, ClaimsPrincipal currentUser)
         {
-            throw new NotImplementedException();
+            var user = await _context.users.FindAsync(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            // Actualizar la información del perfil
+            user.Name = updateUserDto.Name;
+            user.Surename = updateUserDto.Surename;
+            user.Email = updateUserDto.Email;
+
+
+            await _context.SaveChangesAsync();
+            return user;
         }
     }
 }
