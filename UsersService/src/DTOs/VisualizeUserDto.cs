@@ -10,7 +10,7 @@ namespace UsersService.src.DTOs
         public required string Id { get; set; }
         public required string Fullname { get; set; }
         public required string Email { get; set; }
-        public bool State { get; set; }
+        public bool isActive { get; set; }
         public DateOnly RegistrationDate { get; set; }
     }
 }

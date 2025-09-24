@@ -30,7 +30,7 @@ namespace UsersService.src.Data
                             Email = "Admin@perlametro.cl",
                             Password = PasswordManager.HashPassword("Password123+"),
                             RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
-                            State = true
+                            isActive = true
                         };
                     context.users.Add(admin);
                     context.SaveChanges();
@@ -49,7 +49,7 @@ namespace UsersService.src.Data
                             Email = GenerateCryptoRandomString(random.Next(1, 17)) + "@perlametro.cl",
                             Password = PasswordManager.HashPassword(GeneratePassword(12)),
                             RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
-                            State = true
+                            isActive = true
                         };
                         context.users.Add(user);
                         context.SaveChanges();

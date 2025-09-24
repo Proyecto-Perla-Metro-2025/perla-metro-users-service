@@ -7,9 +7,9 @@ namespace UsersService.src.DTOs
 {
     public class UpdateUserDto
     {
-        public required string Name { get; set; }
-        public required string Surename { get; set; }
-        public required string Email { get; set; }
+        public string? Name { get; set; } = string.Empty;
+        public string? Surename { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
         
     }
 }

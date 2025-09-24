@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BCrypt.Net;
 
@@ -94,6 +95,31 @@ namespace UsersService.src.Helper
             {
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Checks the vaidity of a password
+        /// </summary>
+        /// <param name="password">The existing password to check</param>
+        /// <returns>True if it is a valid password</returns>
+        public static bool IsValidPassword(string password)
+        {
+
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            var specialChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?";
+            // At least 8 characters
+            if (password.Length < 8 || !password.Any(char.IsUpper) || !password.Any(char.IsLower)
+                || !password.Any(char.IsDigit) || !password.Any(c => specialChars.Contains(c)))
+            {
+                return false;
+            }
+
+            return true;
+
         }
     }
 }

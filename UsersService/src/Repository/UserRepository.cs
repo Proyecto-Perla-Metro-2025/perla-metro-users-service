@@ -21,10 +21,66 @@ namespace UsersService.src.Repository
             _context = context;
         }
 
-        public Task<User> CreateUser(CreateUserDto createUserDto)
+        public async Task<User> CreateUser(CreateUserDto createUserDto)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(createUserDto.Password) || string.IsNullOrEmpty(createUserDto.Email)
+                || string.IsNullOrEmpty(createUserDto.Surename) || string.IsNullOrEmpty(createUserDto.Name))
+            {
+                throw new ArgumentException("All fields are required");
+            }
+
+            // Check if it's a valid email
+            string email = createUserDto.Email;
+            if (!email.ToLower().Contains('@'))
+            {
+                throw new Exception("Invalid Email");
+            }
+
+            string[] verifyEmail = email.Split('@');
+            if (verifyEmail[1] != "perlametro.cl")
+            {
+                throw new Exception("Invalid Email");
+            }
+            // Check if email is already registered
+            var emailExists = await _context.users.AnyAsync(u => u.Email == createUserDto.Email);
+            if (emailExists)
+            {
+                throw new Exception("Email is already registered");
+            }
+            // Check if it is a valid password
+            if (!PasswordManager.IsValidPassword(createUserDto.Password))
+            {
+                throw new Exception("Invalid password");
+            }
+
+            // make sure it's a new Id
+            string newId;
+            while (true)
+            {
+                newId = Guid.NewGuid().ToString();
+                var checkUser = await _context.users.FindAsync(newId);
+                if (checkUser == null) break;
+            }
+
+            // Create the new user  
+            var user = new User
+            {
+                Id = newId,
+                Role = "User",
+                Name = createUserDto.Name,
+                Surename = createUserDto.Surename,
+                Email = email,
+                Password = PasswordManager.HashPassword(createUserDto.Password),
+                RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
+                isActive = true
+            };
+
+            // Save changes
+            await _context.users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
+
 
         public async Task EnableDisableUser(string Id)
         {
@@ -34,13 +90,14 @@ namespace UsersService.src.Repository
                 throw new Exception("User not found");
             }
 
-            if (user.State == true)
+            if (user.isActive == true)
             {
-                user.State = false;
+                user.isActive = false;
+                user.DeactivationDates.Add(DateOnly.FromDateTime(DateTime.Now));
             }
             else
             {
-                user.State = true;
+                user.isActive = true;
             }
             await _context.SaveChangesAsync();
 
@@ -72,9 +129,9 @@ namespace UsersService.src.Repository
                 users = users.Where(x => x.Email.Contains(query.Email));  
             }
             
-            if (query.State.HasValue)
+            if (query.isActive.HasValue)
             {
-                users = users.Where(x => x.State == query.State.Value);  
+                users = users.Where(x => x.isActive == query.isActive.Value);  
             }
 
             return await users.ToListAsync();
@@ -83,18 +140,47 @@ namespace UsersService.src.Repository
         public async Task<User?> UpdateUser(UpdateUserDto updateUserDto, ClaimsPrincipal currentUser)
         {
             var user = await _context.users.FindAsync(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
+            
+            // Check if user exists
             if (user == null)
             {
                 throw new Exception("User not found");
             }
 
-            // Actualizar la información del perfil
-            user.Name = updateUserDto.Name;
-            user.Surename = updateUserDto.Surename;
-            user.Email = updateUserDto.Email;
+            // Update user email
+            if (!string.IsNullOrEmpty(updateUserDto.Email) && updateUserDto.Email != user.Email)
+            {
+                // Check if it's a valid email
+                string email = updateUserDto.Email;
+                if (!email.ToLower().Contains('@'))
+                {
+                    throw new Exception("Invalid Email");
+                }
+                string[] verifyEmail = email.Split('@');
+                if (verifyEmail[1] != "perlametro.cl")
+                {
+                    throw new Exception("Invalid Email");
+                }
 
+                // Check if email is already registered
+                var emailExists = await _context.users
+                    .AnyAsync(u => u.Email == updateUserDto.Email && u.Id != ClaimTypes.NameIdentifier);
 
+                if (emailExists)
+                {
+                    throw new Exception("Email is already registered");
+                }
+
+                user.Email = updateUserDto.Email;
+            }
+            
+            // Update user name
+            if (!string.IsNullOrEmpty(updateUserDto.Name)) {user.Name = updateUserDto.Name;}
+
+            // Update user surename
+            if (!string.IsNullOrEmpty(updateUserDto.Surename)) { user.Surename = updateUserDto.Surename; }
+
+            // Save changes
             await _context.SaveChangesAsync();
             return user;
         }

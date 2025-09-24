@@ -16,7 +16,7 @@ namespace UsersService.src.Mapper
                 Id = user.Id,
                 Fullname = $"{user.Name} {user.Surename}",
                 Email = user.Email,
-                State = user.State,
+                isActive = user.isActive,
                 RegistrationDate = user.RegistrationDate
             };
         }

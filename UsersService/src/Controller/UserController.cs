@@ -26,7 +26,7 @@ namespace UsersService.src.Controller
         {
             var users = await _userRepository.GetAll();
             var usersDtos = users.ToDtoEnumerable();
-            return Ok(usersDtos);
+            return Ok(users);
         }
 
         [HttpGet("GetUser")]
@@ -54,7 +54,7 @@ namespace UsersService.src.Controller
         }
         [HttpPut("enable-disable/{id}")]
         public async Task<IActionResult> EnableDisableUser([FromRoute] string Id)
-        {   
+        {
             await _userRepository.EnableDisableUser(Id);
             return Ok();
         }
@@ -74,6 +74,25 @@ namespace UsersService.src.Controller
                 }
 
                 return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] CreateUserDto createUserDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var newUser = await _userRepository.CreateUser(createUserDto);
+
+                return Ok(newUser);
             }
             catch (Exception ex)
             {
