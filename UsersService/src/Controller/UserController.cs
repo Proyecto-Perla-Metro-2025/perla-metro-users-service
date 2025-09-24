@@ -99,6 +99,25 @@ namespace UsersService.src.Controller
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDto loginDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var user = await _userRepository.Login(loginDto);
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
     } 
 }

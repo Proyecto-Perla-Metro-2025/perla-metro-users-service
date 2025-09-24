@@ -16,7 +16,7 @@ namespace UsersService.src.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDBContext _context;
-        public UserRepository(ApplicationDBContext context) 
+        public UserRepository(ApplicationDBContext context)
         {
             _context = context;
         }
@@ -119,19 +119,19 @@ namespace UsersService.src.Repository
 
             if (!string.IsNullOrWhiteSpace(query.Name))
             {
-                users = users.Where(u => 
-                    EF.Functions.ILike(u.Name, $"%{query.Name}%") || 
+                users = users.Where(u =>
+                    EF.Functions.ILike(u.Name, $"%{query.Name}%") ||
                     EF.Functions.ILike(u.Surename, $"%{query.Name}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(query.Email))
             {
-                users = users.Where(x => x.Email.Contains(query.Email));  
+                users = users.Where(x => x.Email.Contains(query.Email));
             }
-            
+
             if (query.isActive.HasValue)
             {
-                users = users.Where(x => x.isActive == query.isActive.Value);  
+                users = users.Where(x => x.isActive == query.isActive.Value);
             }
 
             return await users.ToListAsync();
@@ -140,7 +140,7 @@ namespace UsersService.src.Repository
         public async Task<User?> UpdateUser(UpdateUserDto updateUserDto, ClaimsPrincipal currentUser)
         {
             var user = await _context.users.FindAsync(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            
+
             // Check if user exists
             if (user == null)
             {
@@ -173,15 +173,31 @@ namespace UsersService.src.Repository
 
                 user.Email = updateUserDto.Email;
             }
-            
+
             // Update user name
-            if (!string.IsNullOrEmpty(updateUserDto.Name)) {user.Name = updateUserDto.Name;}
+            if (!string.IsNullOrEmpty(updateUserDto.Name)) { user.Name = updateUserDto.Name; }
 
             // Update user surename
             if (!string.IsNullOrEmpty(updateUserDto.Surename)) { user.Surename = updateUserDto.Surename; }
 
             // Save changes
             await _context.SaveChangesAsync();
+            return user;
+        }
+        public async Task<User?> Login(LoginDto loginDto)
+        {
+            var user = await _context.users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("Invalid email or password");
+            }
+
+            if (!PasswordManager.VerifyPassword(loginDto.Password, user.Password))
+            {
+                throw new UnauthorizedAccessException("Invalid email or password");
+            }
+
             return user;
         }
     }
