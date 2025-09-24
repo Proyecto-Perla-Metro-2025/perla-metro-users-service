@@ -174,6 +174,16 @@ namespace UsersService.src.Repository
                 user.Email = updateUserDto.Email;
             }
 
+            // Check if it is a valid password
+            if (!string.IsNullOrEmpty(updateUserDto.Password))
+            {
+                if (!PasswordManager.IsValidPassword(updateUserDto.Password))
+                {
+                    throw new Exception("Invalid password");
+                }
+                user.Password = updateUserDto.Password;
+            }
+
             // Update user name
             if (!string.IsNullOrEmpty(updateUserDto.Name)) { user.Name = updateUserDto.Name; }
 
