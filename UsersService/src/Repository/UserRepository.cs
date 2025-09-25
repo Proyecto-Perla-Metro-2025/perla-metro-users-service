@@ -16,11 +16,19 @@ namespace UsersService.src.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDBContext _context;
+        /// <summary>
+        /// Create conection with the db
+        /// </summary>
+        /// <param name="context"></param>
         public UserRepository(ApplicationDBContext context)
         {
             _context = context;
         }
-
+        /// <summary>
+        /// Creates and saves a new user in the db
+        /// </summary>
+        /// <param name="createUserDto"></param>
+        /// <returns>The created user</returns>
         public async Task<User> CreateUser(CreateUserDto createUserDto)
         {
             if (string.IsNullOrEmpty(createUserDto.Password) || string.IsNullOrEmpty(createUserDto.Email)
@@ -81,7 +89,10 @@ namespace UsersService.src.Repository
             return user;
         }
 
-
+        /// <summary>
+        /// Changes the state of a user, from active to deactivated or in reverse
+        /// </summary>
+        /// <param name="Id"></param>
         public async Task EnableDisableUser(string Id)
         {
             var user = await _context.users.FindAsync(Id);
@@ -102,7 +113,10 @@ namespace UsersService.src.Repository
             await _context.SaveChangesAsync();
 
         }
-
+        /// <summary>
+        /// Gets all the users from the db
+        /// </summary>
+        /// <returns>A list with all the users</returns>
         public async Task<List<User>> GetAll()
         {
             return await _context.users.ToListAsync();
@@ -136,7 +150,12 @@ namespace UsersService.src.Repository
 
             return await users.ToListAsync();
         }
-
+        /// <summary>
+        /// Can update the name, surename, email and password of the user
+        /// </summary>
+        /// <param name="updateUserDto"></param>
+        /// <param name="currentUser"></param>
+        /// <returns>The updated user</returns>
         public async Task<User?> UpdateUser(UpdateUserDto updateUserDto, ClaimsPrincipal currentUser)
         {
             var user = await _context.users.FindAsync(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -194,6 +213,11 @@ namespace UsersService.src.Repository
             await _context.SaveChangesAsync();
             return user;
         }
+        /// <summary>
+        /// Function for the login of the user
+        /// </summary>
+        /// <param name="loginDto"></param>
+        /// <returns>The logged user</returns>
         public async Task<User?> Login(LoginDto loginDto)
         {
             var user = await _context.users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);

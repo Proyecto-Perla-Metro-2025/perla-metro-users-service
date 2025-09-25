@@ -11,6 +11,10 @@ namespace UsersService.src.Data
 {
     public class Seeder
     {
+        /// <summary>
+        /// Ensures the db is created and seeds it
+        /// </summary>
+        /// <param name="serviceProvider"></param>
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
@@ -22,16 +26,16 @@ namespace UsersService.src.Data
                 if (!context.users.Any())
                 {
                     var admin = new User
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Role = "Admin",
-                            Name = "Nombre_Admin",
-                            Surename = "Apellido_Admin",
-                            Email = "Admin@perlametro.cl",
-                            Password = PasswordManager.HashPassword("Password123+"),
-                            RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
-                            isActive = true
-                        };
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Role = "Admin",
+                        Name = "Nombre_Admin",
+                        Surename = "Apellido_Admin",
+                        Email = "Admin@perlametro.cl",
+                        Password = PasswordManager.HashPassword("Password123+"),
+                        RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
+                        isActive = true
+                    };
                     context.users.Add(admin);
                     context.SaveChanges();
 
