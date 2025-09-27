@@ -11,16 +11,19 @@ using UsersService.src.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Env.Load();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers().AddJsonOptions(opts =>
     {
