@@ -8,16 +8,16 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY ["YourProjectName.csproj", "./"]
-RUN dotnet restore "YourProjectName.csproj"
+COPY ["UsersService.csproj", "./"]
+RUN dotnet restore "UsersService.csproj"
 
 # Copy everything else and build
 COPY . .
-RUN dotnet build "YourProjectName.csproj" -c Release -o /app/build
+RUN dotnet build "UsersService.csproj" -c Release -o /app/build
 
 # Publish the app
 FROM build AS publish
-RUN dotnet publish "YourProjectName.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "UsersService.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Build final image
 FROM base AS final

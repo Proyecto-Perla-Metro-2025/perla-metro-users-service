@@ -140,6 +140,8 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
+app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow }));
+
 // Authentication must come before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
