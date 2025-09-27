@@ -106,7 +106,7 @@ namespace UsersService.src.Controller
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
@@ -125,6 +125,11 @@ namespace UsersService.src.Controller
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> test()
+        {
+            return Ok();
         }
 
     } 
