@@ -18,8 +18,23 @@ Env.Load();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// DEBUG: Print all environment variables and configuration
+Console.WriteLine("=== DEBUGGING CONNECTION STRING ===");
+Console.WriteLine($"ASPNETCORE_ENVIRONMENT: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+Console.WriteLine($"ConnectionStrings__DefaultConnection: {Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")}");
 
-var connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
+// Print all configuration sources
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Configuration ConnectionString: {connectionString ?? "NULL"}");
+
+// Print all connection strings in configuration
+var connectionStrings = builder.Configuration.GetSection("ConnectionStrings").GetChildren();
+foreach (var cs in connectionStrings)
+{
+    Console.WriteLine($"Config ConnectionString [{cs.Key}]: {cs.Value}");
+}
+Console.WriteLine("=== END DEBUG ===");
+//var connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
