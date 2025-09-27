@@ -218,21 +218,62 @@ namespace UsersService.src.Repository
         /// </summary>
         /// <param name="loginDto"></param>
         /// <returns>The logged user</returns>
-        public async Task<User?> Login(LoginDto loginDto)
+        public async Task<UserLoginResponse?> Login(LoginDto loginDto)
         {
-            var user = await _context.users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-
-            if (user == null)
+            try
             {
-                throw new UnauthorizedAccessException("Invalid email or password");
-            }
+                var user = await _context.users
+                    .FirstOrDefaultAsync(u => u.Email == loginDto.Email && u.isActive == true);
+                
+                if (user == null)
+                {
+                    return new UserLoginResponse 
+                    { 
+                        IsValid = false, 
+                        ErrorMessage = "User not found" 
+                    };
+                }
+                
+                // Verify password
+                var isPasswordValid = PasswordManager.VerifyPassword(loginDto.Password, user.Password);
 
-            if (!PasswordManager.VerifyPassword(loginDto.Password, user.Password))
+                if (!isPasswordValid)
+                {
+                    return new UserLoginResponse
+                    {
+                        IsValid = false,
+                        ErrorMessage = "Invalid password"
+                    };
+                }
+                
+                return new UserLoginResponse
+                {
+                    IsValid = true,
+                    Id = user.Id,
+                    Email = user.Email,
+                    Name = user.Name,
+                    Surename = user.Surename,
+                    Role = user.Role,
+                    Claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Role, user.Role),
+                        new Claim(ClaimTypes.GivenName, user.Name),
+                        new Claim(ClaimTypes.Surname, user.Surename),
+                        new Claim("fullName", $"{user.Name} {user.Surename}".Trim()),
+                        new Claim("registrationDate", user.RegistrationDate.ToString("yyyy-MM-dd"))
+                    }
+                };
+            }
+            catch (Exception ex)
             {
-                throw new UnauthorizedAccessException("Invalid email or password");
+                return new UserLoginResponse 
+                { 
+                    IsValid = false, 
+                    ErrorMessage = "Validation error occurred" 
+                };
             }
-
-            return user;
         }
     }
 }

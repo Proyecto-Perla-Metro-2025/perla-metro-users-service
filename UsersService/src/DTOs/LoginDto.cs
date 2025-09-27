@@ -12,7 +12,7 @@ namespace UsersService.src.DTOs
         /// </summary>
         public required string Email { get; set; }
         /// <summary>
-        /// User's registration date
+        /// User's passsword
         /// </summary>
         public required string Password { get; set; }
     }

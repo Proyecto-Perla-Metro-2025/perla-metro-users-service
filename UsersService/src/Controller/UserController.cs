@@ -43,6 +43,7 @@ namespace UsersService.src.Controller
         }
 
         [HttpGet("UserFilter")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers([FromQuery] QueryObject query)
         {
             if (!ModelState.IsValid)

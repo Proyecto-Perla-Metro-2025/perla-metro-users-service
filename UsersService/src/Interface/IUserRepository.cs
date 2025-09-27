@@ -17,6 +17,6 @@ namespace UsersService.src.Interface
         Task<User?> UpdateUser(UpdateUserDto updateUserDto, ClaimsPrincipal currentUser);
         Task EnableDisableUser(string Id);
         Task<List<User>> GetUsers(QueryObject query);
-        Task<User?> Login(LoginDto loginDto);
+        Task<UserLoginResponse?> Login(LoginDto loginDto);
     }
 }
