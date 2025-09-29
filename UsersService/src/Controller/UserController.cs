@@ -126,11 +126,5 @@ namespace UsersService.src.Controller
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> test()
-        {
-            return Ok();
-        }
-
     } 
 }

@@ -200,7 +200,7 @@ namespace UsersService.src.Repository
                 {
                     throw new Exception("Invalid password");
                 }
-                user.Password = updateUserDto.Password;
+                user.Password = PasswordManager.HashPassword(updateUserDto.Password);
             }
 
             // Update user name
