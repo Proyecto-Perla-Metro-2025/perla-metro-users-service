@@ -89,7 +89,7 @@ Revisar el archivo UsersService.postman_collection.json para toda la informació
     ```
 
 Cuando quieras apagar definitivamente la aplicación recuerda utilizar el comando 
-    ```bash
+    ```
     docker-compose down
     ```
 Para asegurarte de que la base de datos también se detenga    
